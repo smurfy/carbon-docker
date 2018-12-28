@@ -1,7 +1,7 @@
 FROM python:2.7-alpine3.8
 
-ENV WHISPER_VERSION 1.1.4
-ENV CARBON_VERSION 1.1.4
+ENV WHISPER_VERSION 1.1.5
+ENV CARBON_VERSION 1.1.5
 
 RUN apk add --no-cache --virtual .build-deps musl-dev build-base && \
     pip install twisted simplejson && \
