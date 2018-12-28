@@ -1,9 +1,10 @@
-FROM python:2.7-alpine3.8
+FROM alpine:3.8
 
 ENV WHISPER_VERSION 1.1.5
 ENV CARBON_VERSION 1.1.5
 
-RUN apk add --no-cache --virtual .build-deps musl-dev build-base && \
+RUN apk add --no-cache python2 && \
+    apk add --no-cache --virtual .build-deps musl-dev build-base python2-dev py2-pip && \
     pip install twisted simplejson && \
     pip install whisper==$WHISPER_VERSION && \
     pip install --install-option="--prefix=/var/lib/graphite" --install-option="--install-lib=/var/lib/graphite/lib" carbon==$CARBON_VERSION && \
