@@ -34,4 +34,6 @@ VOLUME ["/data/graphite"]
 ENV GRAPHITE_STORAGE_DIR /data/graphite/storage
 ENV GRAPHITE_CONF_DIR /data/graphite/conf
 
+STOPSIGNAL SIGTERM
+
 CMD ["/run.sh"]
