@@ -1,7 +1,7 @@
 FROM alpine:3.8
 
-ENV WHISPER_VERSION 1.1.5
-ENV CARBON_VERSION 1.1.5
+ENV WHISPER_VERSION 1.1.7
+ENV CARBON_VERSION 1.1.7
 
 RUN apk add --no-cache python2 && \
     apk add --no-cache --virtual .build-deps musl-dev build-base python2-dev py2-pip && \
