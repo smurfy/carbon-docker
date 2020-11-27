@@ -1,15 +1,49 @@
-FROM alpine:3.8
+FROM alpine:3.11.6 as base
 
-ENV WHISPER_VERSION 1.1.7
-ENV CARBON_VERSION 1.1.7
+RUN true \
+ && apk add --no-cache \
+      findutils \
+      py3-pyldap \
+      runit \
+      expect
 
-RUN apk add --no-cache python2 && \
-    apk add --no-cache --virtual .build-deps musl-dev build-base python2-dev py2-pip && \
-    pip install twisted simplejson && \
-    pip install whisper==$WHISPER_VERSION && \
-    pip install --install-option="--prefix=/var/lib/graphite" --install-option="--install-lib=/var/lib/graphite/lib" carbon==$CARBON_VERSION && \
-    apk del .build-deps && \
-    rm -rf /root/.cache/pip
+FROM base as build
+
+RUN true \
+ && apk add --update \
+      alpine-sdk \
+      git \
+      pkgconfig \
+      py3-pip \
+      py3-virtualenv==16.7.8-r0 \
+      python3-dev \
+      wget \
+ && virtualenv /opt/graphite \
+ && . /opt/graphite/bin/activate \
+ && pip3 install simplejson
+
+ARG version=1.1.7
+
+# install whisper
+ARG whisper_version=${version}
+ARG whisper_repo=https://github.com/graphite-project/whisper.git
+RUN git clone -b ${whisper_version} --depth 1 ${whisper_repo} /usr/local/src/whisper \
+ && cd /usr/local/src/whisper \
+ && . /opt/graphite/bin/activate \
+ && python3 ./setup.py install
+
+# install carbon
+ARG carbon_version=${version}
+ARG carbon_repo=https://github.com/graphite-project/carbon.git
+RUN . /opt/graphite/bin/activate \
+ && git clone -b ${carbon_version} --depth 1 ${carbon_repo} /usr/local/src/carbon \
+ && cd /usr/local/src/carbon \
+ && pip3 install -r requirements.txt \
+ && python3 ./setup.py install
+
+FROM base as production
+
+COPY --from=build /opt /opt
 
 ADD run.sh /run.sh
 
