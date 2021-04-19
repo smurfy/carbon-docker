@@ -1,4 +1,4 @@
-FROM alpine:3.11.6 as base
+FROM alpine:3.13.5 as base
 
 RUN true \
  && apk add --no-cache \
@@ -22,7 +22,7 @@ RUN true \
  && . /opt/graphite/bin/activate \
  && pip3 install simplejson
 
-ARG version=1.1.7
+ARG version=1.1.8
 
 # install whisper
 ARG whisper_version=${version}
